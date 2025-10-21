@@ -1,70 +1,67 @@
 import React, { useState } from "react";
 
-const Projects = ({ data, setData, goNext, goBack }) => {
-  const [projects, setProjects] = useState(data || []);
+const Projects = ({ data, onNext, onBack }) => {
+  const [projects, setProjects] = useState(
+    data?.length ? data : [{ projectName: "", techStack: "", description: "" }]
+  );
 
-  const handleAdd = () =>
+  const handleChange = (index, e) => {
+    const newProjects = [...projects];
+    newProjects[index][e.target.name] = e.target.value;
+    setProjects(newProjects);
+  };
+
+  const addProject = () =>
     setProjects([
       ...projects,
       { projectName: "", techStack: "", description: "" },
     ]);
 
-  const handleChange = (index, e) => {
-    const updated = [...projects];
-    updated[index][e.target.name] = e.target.value;
-    setProjects(updated);
-  };
-
-  const handleDelete = (index) => {
-    const updated = [...projects];
-    updated.splice(index, 1);
-    setProjects(updated);
-  };
-
-  const handleNext = () => {
-    setData(projects);
-    goNext();
+  const deleteProject = (index) => {
+    const newProjects = projects.filter((_, i) => i !== index);
+    setProjects(
+      newProjects.length
+        ? newProjects
+        : [{ projectName: "", techStack: "", description: "" }]
+    );
   };
 
   return (
     <div>
       <h2>Add your Mini Projects</h2>
-      {projects.map((proj, i) => (
-        <div key={i}>
+      {projects.map((project, index) => (
+        <div key={index}>
           <input
-            type="text"
             name="projectName"
             placeholder="Project Name"
-            value={proj.projectName}
-            onChange={(e) => handleChange(i, e)}
+            value={project.projectName}
+            onChange={(e) => handleChange(index, e)}
           />
           <input
-            type="text"
             name="techStack"
             placeholder="Tech Stack"
-            value={proj.techStack}
-            onChange={(e) => handleChange(i, e)}
+            value={project.techStack}
+            onChange={(e) => handleChange(index, e)}
           />
           <input
-            type="text"
             name="description"
             placeholder="Description"
-            value={proj.description}
-            onChange={(e) => handleChange(i, e)}
+            value={project.description}
+            onChange={(e) => handleChange(index, e)}
           />
-          <button id="delete_project" onClick={() => handleDelete(i)}>
+          <button id="delete" onClick={() => deleteProject(index)}>
             Delete
           </button>
         </div>
       ))}
-      <button id="add_project" onClick={handleAdd}>
-        Add Project
+      <button id="add_project" onClick={addProject}>
+        Add
       </button>
       <div>
-        <button id="back" onClick={goBack}>
+        <button id="back" onClick={onBack}>
           Back
         </button>
-        <button id="next" onClick={handleNext}>
+        <button id="next" onClick={() => onNext(projects)}>
           Next
         </button>
       </div>

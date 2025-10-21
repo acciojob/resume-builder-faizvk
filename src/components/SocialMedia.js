@@ -1,51 +1,45 @@
 import React, { useState } from "react";
 
-const SocialMedia = ({ data, setData, goNext, goBack }) => {
-  const [links, setLinks] = useState(data || []);
+const SocialMedia = ({ data, onNext, onBack }) => {
+  const [links, setLinks] = useState(data?.length ? data : [""]);
 
-  const handleAdd = () => setLinks([...links, ""]);
-
-  const handleChange = (index, e) => {
-    const updated = [...links];
-    updated[index] = e.target.value;
-    setLinks(updated);
+  const handleChange = (index, value) => {
+    const newLinks = [...links];
+    newLinks[index] = value;
+    setLinks(newLinks);
   };
 
-  const handleDelete = (index) => {
-    const updated = [...links];
-    updated.splice(index, 1);
-    setLinks(updated);
-  };
+  const addLink = () => setLinks([...links, ""]);
 
-  const handleNext = () => {
-    setData(links);
-    goNext();
+  const deleteLink = (index) => {
+    const newLinks = links.filter((_, i) => i !== index);
+    setLinks(newLinks.length ? newLinks : [""]);
   };
 
   return (
     <div>
       <h2>Add your Social Media Links</h2>
-      {links.map((link, i) => (
-        <div key={i}>
+      {links.map((link, index) => (
+        <div key={index}>
           <input
-            type="text"
             name="Social"
+            placeholder="Link"
             value={link}
-            onChange={(e) => handleChange(i, e)}
+            onChange={(e) => handleChange(index, e.target.value)}
           />
-          <button id="delete_social" onClick={() => handleDelete(i)}>
+          <button id="delete_social" onClick={() => deleteLink(index)}>
             Delete
           </button>
         </div>
       ))}
-      <button id="add_social" onClick={handleAdd}>
-        Add Social
+      <button id="add_social" onClick={addLink}>
+        Add
       </button>
       <div>
-        <button id="back" onClick={goBack}>
+        <button id="back" onClick={onBack}>
           Back
         </button>
-        <button id="next" onClick={handleNext}>
+        <button id="next" onClick={() => onNext(links)}>
           Next
         </button>
       </div>

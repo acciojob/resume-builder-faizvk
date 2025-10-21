@@ -1,78 +1,74 @@
 import React, { useState } from "react";
 
-const Education = ({ data, setData, goNext, goBack }) => {
-  const [educations, setEducations] = useState(data || []);
+const Education = ({ data, onNext, onBack }) => {
+  const [educations, setEducations] = useState(
+    data?.length
+      ? data
+      : [{ courseName: "", completionYear: "", college: "", percentage: "" }]
+  );
 
-  const handleAdd = () => {
+  const handleChange = (index, e) => {
+    const newEducations = [...educations];
+    newEducations[index][e.target.name] = e.target.value;
+    setEducations(newEducations);
+  };
+
+  const addEducation = () => {
     setEducations([
       ...educations,
       { courseName: "", completionYear: "", college: "", percentage: "" },
     ]);
   };
 
-  const handleChange = (index, e) => {
-    const updated = [...educations];
-    updated[index][e.target.name] = e.target.value;
-    setEducations(updated);
-  };
-
-  const handleDelete = (index) => {
-    const updated = [...educations];
-    updated.splice(index, 1);
-    setEducations(updated);
-  };
-
-  const handleNext = () => {
-    setData(educations);
-    goNext();
+  const deleteEducation = (index) => {
+    const newEducations = educations.filter((_, i) => i !== index);
+    setEducations(
+      newEducations.length
+        ? newEducations
+        : [{ courseName: "", completionYear: "", college: "", percentage: "" }]
+    );
   };
 
   return (
     <div>
       <h2>Add your Education Details</h2>
-      {educations.map((edu, i) => (
-        <div key={i}>
+      {educations.map((edu, index) => (
+        <div key={index}>
           <input
-            type="text"
             name="courseName"
             placeholder="Course Name"
             value={edu.courseName}
-            onChange={(e) => handleChange(i, e)}
+            onChange={(e) => handleChange(index, e)}
           />
           <input
-            type="text"
             name="completionYear"
             placeholder="Completion Year"
             value={edu.completionYear}
-            onChange={(e) => handleChange(i, e)}
+            onChange={(e) => handleChange(index, e)}
           />
           <input
-            type="text"
             name="college"
             placeholder="College"
             value={edu.college}
-            onChange={(e) => handleChange(i, e)}
+            onChange={(e) => handleChange(index, e)}
           />
           <input
-            type="text"
             name="percentage"
             placeholder="Percentage"
             value={edu.percentage}
-            onChange={(e) => handleChange(i, e)}
+            onChange={(e) => handleChange(index, e)}
           />
-          <button id="delete_education" onClick={() => handleDelete(i)}>
-            Delete
-          </button>
+          <button onClick={() => deleteEducation(index)}>Delete</button>
         </div>
       ))}
-      <button id="add_education" onClick={handleAdd}>
-        Add Education
+      <button id="add_education" onClick={addEducation}>
+        Add
       </button>
       <div>
-        <button id="back" onClick={goBack}>
+        <button id="back" onClick={onBack}>
           Back
         </button>
-        <button id="next" onClick={handleNext}>
+        <button id="next" onClick={() => onNext(educations)}>
           Next
         </button>
       </div>

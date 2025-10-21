@@ -1,51 +1,45 @@
 import React, { useState } from "react";
 
-const Skills = ({ data, setData, goNext, goBack }) => {
-  const [skills, setSkills] = useState(data || []);
+const Skills = ({ data, onNext, onBack }) => {
+  const [skills, setSkills] = useState(data?.length ? data : [""]);
 
-  const handleAdd = () => setSkills([...skills, ""]);
-
-  const handleChange = (index, e) => {
-    const updated = [...skills];
-    updated[index] = e.target.value;
-    setSkills(updated);
+  const handleChange = (index, value) => {
+    const newSkills = [...skills];
+    newSkills[index] = value;
+    setSkills(newSkills);
   };
 
-  const handleDelete = (index) => {
-    const updated = [...skills];
-    updated.splice(index, 1);
-    setSkills(updated);
-  };
+  const addSkill = () => setSkills([...skills, ""]);
 
-  const handleNext = () => {
-    setData(skills);
-    goNext();
+  const deleteSkill = (index) => {
+    const newSkills = skills.filter((_, i) => i !== index);
+    setSkills(newSkills.length ? newSkills : [""]);
   };
 
   return (
     <div>
       <h2>Add your Skills</h2>
-      {skills.map((skill, i) => (
-        <div key={i}>
+      {skills.map((skill, index) => (
+        <div key={index}>
           <input
-            type="text"
             name="skill"
+            placeholder="Skill"
             value={skill}
-            onChange={(e) => handleChange(i, e)}
+            onChange={(e) => handleChange(index, e.target.value)}
           />
-          <button id="delete_skill" onClick={() => handleDelete(i)}>
+          <button id="delete_skill" onClick={() => deleteSkill(index)}>
             Delete
           </button>
         </div>
       ))}
-      <button id="add_skill" onClick={handleAdd}>
-        Add Skill
+      <button id="add_skill" onClick={addSkill}>
+        Add
       </button>
       <div>
-        <button id="back" onClick={goBack}>
+        <button id="back" onClick={onBack}>
           Back
         </button>
-        <button id="next" onClick={handleNext}>
+        <button id="next" onClick={() => onNext(skills)}>
           Next
         </button>
       </div>
