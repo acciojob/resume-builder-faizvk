@@ -1,50 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const Skills = ({ data, onNext, onBack }) => {
-  const [skills, setSkills] = useState(data?.length ? data : [""]);
+const Education = ({ onValidChange }) => {
+  const [educations, setEducations] = useState([
+    { courseName: "", completionYear: "", college: "", percentage: "" },
+  ]);
 
-  const handleChange = (index, value) => {
-    const newSkills = [...skills];
-    newSkills[index] = value;
-    setSkills(newSkills);
+  useEffect(() => {
+    // Valid if all fields in all entries are filled
+    const valid = educations.every(
+      (e) =>
+        e.courseName.trim() &&
+        e.completionYear.trim() &&
+        e.college.trim() &&
+        e.percentage.trim()
+    );
+    onValidChange(valid);
+  }, [educations, onValidChange]);
+
+  const handleChange = (index, field, value) => {
+    const newEdu = [...educations];
+    newEdu[index][field] = value;
+    setEducations(newEdu);
   };
 
-  const addSkill = () => setSkills([...skills, ""]);
+  const addEducation = () =>
+    setEducations([
+      ...educations,
+      { courseName: "", completionYear: "", college: "", percentage: "" },
+    ]);
 
-  const deleteSkill = (index) => {
-    const newSkills = skills.filter((_, i) => i !== index);
-    setSkills(newSkills.length ? newSkills : [""]);
+  const removeEducation = (index) => {
+    const newEdu = [...educations];
+    newEdu.splice(index, 1);
+    setEducations(newEdu);
   };
 
   return (
     <div>
-      <h2>Add your Skills</h2>
-      {skills.map((skill, index) => (
+      <h2>Add your Education Details</h2>
+      {educations.map((edu, index) => (
         <div key={index}>
           <input
-            name="skill"
-            placeholder="Skill"
-            value={skill}
-            onChange={(e) => handleChange(index, e.target.value)}
+            name="courseName"
+            placeholder="Course Name"
+            value={edu.courseName}
+            onChange={(e) => handleChange(index, "courseName", e.target.value)}
           />
-          <button id="delete_skill" onClick={() => deleteSkill(index)}>
+          <input
+            name="completionYear"
+            placeholder="Completion Year"
+            value={edu.completionYear}
+            onChange={(e) =>
+              handleChange(index, "completionYear", e.target.value)
+            }
+          />
+          <input
+            name="college"
+            placeholder="College"
+            value={edu.college}
+            onChange={(e) => handleChange(index, "college", e.target.value)}
+          />
+          <input
+            name="percentage"
+            placeholder="Percentage"
+            value={edu.percentage}
+            onChange={(e) => handleChange(index, "percentage", e.target.value)}
+          />
+          <button id="delete" onClick={() => removeEducation(index)}>
             Delete
           </button>
         </div>
       ))}
-      <button id="add_skill" onClick={addSkill}>
-        Add
+      <button id="add_education" onClick={addEducation}>
+        Add Education
       </button>
-      <div>
-        <button id="back" onClick={onBack}>
-          Back
-        </button>
-        <button id="next" onClick={() => onNext(skills)}>
-          Next
-        </button>
-      </div>
     </div>
   );
 };
 
-export default Skills;
+export default Education;

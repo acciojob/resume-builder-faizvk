@@ -1,48 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const SocialMedia = ({ data, onNext, onBack }) => {
-  const [links, setLinks] = useState(data?.length ? data : [""]);
+const SocialMedia = ({ onValidChange }) => {
+  const [socials, setSocials] = useState([""]);
+
+  useEffect(() => {
+    const valid = socials.every((s) => s.trim());
+    onValidChange(valid);
+  }, [socials, onValidChange]);
 
   const handleChange = (index, value) => {
-    const newLinks = [...links];
-    newLinks[index] = value;
-    setLinks(newLinks);
+    const newSocials = [...socials];
+    newSocials[index] = value;
+    setSocials(newSocials);
   };
 
-  const addLink = () => setLinks([...links, ""]);
-
-  const deleteLink = (index) => {
-    const newLinks = links.filter((_, i) => i !== index);
-    setLinks(newLinks.length ? newLinks : [""]);
+  const addSocial = () => setSocials([...socials, ""]);
+  const removeSocial = (index) => {
+    const newSocials = [...socials];
+    newSocials.splice(index, 1);
+    setSocials(newSocials);
   };
 
   return (
     <div>
       <h2>Add your Social Media Links</h2>
-      {links.map((link, index) => (
+      {socials.map((social, index) => (
         <div key={index}>
           <input
             name="Social"
-            placeholder="Link"
-            value={link}
+            placeholder="Social Media URL"
+            value={social}
             onChange={(e) => handleChange(index, e.target.value)}
           />
-          <button id="delete_social" onClick={() => deleteLink(index)}>
+          <button id="delete" onClick={() => removeSocial(index)}>
             Delete
           </button>
         </div>
       ))}
-      <button id="add_social" onClick={addLink}>
-        Add
+      <button id="add_social" onClick={addSocial}>
+        Add Social Media
       </button>
-      <div>
-        <button id="back" onClick={onBack}>
-          Back
-        </button>
-        <button id="next" onClick={() => onNext(links)}>
-          Next
-        </button>
-      </div>
     </div>
   );
 };

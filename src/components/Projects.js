@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const Projects = ({ data, onNext, onBack }) => {
-  const [projects, setProjects] = useState(
-    data?.length ? data : [{ projectName: "", techStack: "", description: "" }]
-  );
+const Projects = ({ onValidChange }) => {
+  const [projects, setProjects] = useState([
+    { projectName: "", techStack: "", description: "" },
+  ]);
 
-  const handleChange = (index, e) => {
+  useEffect(() => {
+    const valid = projects.every(
+      (p) => p.projectName.trim() && p.techStack.trim() && p.description.trim()
+    );
+    onValidChange(valid);
+  }, [projects, onValidChange]);
+
+  const handleChange = (index, field, value) => {
     const newProjects = [...projects];
-    newProjects[index][e.target.name] = e.target.value;
+    newProjects[index][field] = value;
     setProjects(newProjects);
   };
 
@@ -17,13 +24,10 @@ const Projects = ({ data, onNext, onBack }) => {
       { projectName: "", techStack: "", description: "" },
     ]);
 
-  const deleteProject = (index) => {
-    const newProjects = projects.filter((_, i) => i !== index);
-    setProjects(
-      newProjects.length
-        ? newProjects
-        : [{ projectName: "", techStack: "", description: "" }]
-    );
+  const removeProject = (index) => {
+    const newProjects = [...projects];
+    newProjects.splice(index, 1);
+    setProjects(newProjects);
   };
 
   return (
@@ -35,36 +39,28 @@ const Projects = ({ data, onNext, onBack }) => {
             name="projectName"
             placeholder="Project Name"
             value={project.projectName}
-            onChange={(e) => handleChange(index, e)}
+            onChange={(e) => handleChange(index, "projectName", e.target.value)}
           />
           <input
             name="techStack"
             placeholder="Tech Stack"
             value={project.techStack}
-            onChange={(e) => handleChange(index, e)}
+            onChange={(e) => handleChange(index, "techStack", e.target.value)}
           />
           <input
             name="description"
             placeholder="Description"
             value={project.description}
-            onChange={(e) => handleChange(index, e)}
+            onChange={(e) => handleChange(index, "description", e.target.value)}
           />
-          <button id="delete" onClick={() => deleteProject(index)}>
+          <button id="delete" onClick={() => removeProject(index)}>
             Delete
           </button>
         </div>
       ))}
       <button id="add_project" onClick={addProject}>
-        Add
+        Add Project
       </button>
-      <div>
-        <button id="back" onClick={onBack}>
-          Back
-        </button>
-        <button id="next" onClick={() => onNext(projects)}>
-          Next
-        </button>
-      </div>
     </div>
   );
 };

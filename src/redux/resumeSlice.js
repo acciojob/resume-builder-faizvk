@@ -1,14 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  step: 1, // current step (1=Profile, 2=Education, ...)
-  profile: {
-    fname: "",
-    lname: "",
-    phone: "",
-    address: "",
-    url: "",
-  },
+  profile: {},
   education: [],
   skills: [],
   projects: [],
@@ -19,50 +12,29 @@ const resumeSlice = createSlice({
   name: "resume",
   initialState,
   reducers: {
-    nextStep: (state) => {
-      if (state.step < 5) state.step += 1;
+    setProfile: (state, action) => {
+      state.profile = action.payload;
     },
-    prevStep: (state) => {
-      if (state.step > 1) state.step -= 1;
+    setEducation: (state, action) => {
+      state.education = action.payload;
     },
-    updateProfile: (state, action) => {
-      state.profile = { ...state.profile, ...action.payload };
+    setSkills: (state, action) => {
+      state.skills = action.payload;
     },
-    addEducation: (state, action) => {
-      state.education.push(action.payload);
+    setProjects: (state, action) => {
+      state.projects = action.payload;
     },
-    deleteEducation: (state, action) => {
-      state.education.splice(action.payload, 1);
-    },
-    addSkill: (state, action) => {
-      state.skills.push(action.payload);
-    },
-    deleteSkill: (state, action) => {
-      state.skills.splice(action.payload, 1);
-    },
-    addProject: (state, action) => {
-      state.projects.push(action.payload);
-    },
-    deleteProject: (state, action) => {
-      state.projects.splice(action.payload, 1);
-    },
-    addSocialMedia: (state, action) => {
-      state.socialMedia.push(action.payload);
+    setSocialMedia: (state, action) => {
+      state.socialMedia = action.payload;
     },
   },
 });
 
 export const {
-  nextStep,
-  prevStep,
-  updateProfile,
-  addEducation,
-  deleteEducation,
-  addSkill,
-  deleteSkill,
-  addProject,
-  deleteProject,
-  addSocialMedia,
+  setProfile,
+  setEducation,
+  setSkills,
+  setProjects,
+  setSocialMedia,
 } = resumeSlice.actions;
-
 export default resumeSlice.reducer;
