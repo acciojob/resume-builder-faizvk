@@ -1,39 +1,15 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addSocial } from "../redux/resumeSlice";
+import React from "react";
+import Navigation from "./Navigation";
 
-const SocialMedia = () => {
-  const dispatch = useDispatch();
-  const social = useSelector((state) => state.resume.social);
-
-  const [link, setLink] = useState("");
-
-  const handleAdd = () => {
-    if (link.trim() === "") return;
-    dispatch(addSocial(link));
-    setLink("");
-  };
-
+function SocialMedia() {
   return (
     <div>
-      <h2>Social Media</h2>
-      <input
-        name="Social"
-        value={link}
-        onChange={(e) => setLink(e.target.value)}
-        placeholder="Social Media URL"
-      />
-      <button id="add_social" onClick={handleAdd}>
-        Add Social
-      </button>
-
-      <ul>
-        {social.map((s, i) => (
-          <li key={i}>{s}</li>
-        ))}
-      </ul>
+      <h3>Add your Social Media Links</h3>
+      <input type="text" name="Social" placeholder="Social Link" />
+      <button id="add_social">Add Social</button>
+      <Navigation showSave={true} /> {/* Last step, show Save */}
     </div>
   );
-};
+}
 
 export default SocialMedia;

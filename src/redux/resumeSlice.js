@@ -1,53 +1,68 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  profile: {},
+  step: 1, // current step (1=Profile, 2=Education, ...)
+  profile: {
+    fname: "",
+    lname: "",
+    phone: "",
+    address: "",
+    url: "",
+  },
   education: [],
   skills: [],
   projects: [],
-  social: [],
+  socialMedia: [],
 };
 
 const resumeSlice = createSlice({
   name: "resume",
   initialState,
   reducers: {
-    saveProfile: (state, action) => {
-      state.profile = action.payload;
+    nextStep: (state) => {
+      if (state.step < 5) state.step += 1;
+    },
+    prevStep: (state) => {
+      if (state.step > 1) state.step -= 1;
+    },
+    updateProfile: (state, action) => {
+      state.profile = { ...state.profile, ...action.payload };
     },
     addEducation: (state, action) => {
       state.education.push(action.payload);
     },
     deleteEducation: (state, action) => {
-      state.education = state.education.filter((_, i) => i !== action.payload);
+      state.education.splice(action.payload, 1);
     },
     addSkill: (state, action) => {
       state.skills.push(action.payload);
     },
     deleteSkill: (state, action) => {
-      state.skills = state.skills.filter((_, i) => i !== action.payload);
+      state.skills.splice(action.payload, 1);
     },
     addProject: (state, action) => {
       state.projects.push(action.payload);
     },
     deleteProject: (state, action) => {
-      state.projects = state.projects.filter((_, i) => i !== action.payload);
+      state.projects.splice(action.payload, 1);
     },
-    addSocial: (state, action) => {
-      state.social.push(action.payload);
+    addSocialMedia: (state, action) => {
+      state.socialMedia.push(action.payload);
     },
   },
 });
 
 export const {
-  saveProfile,
+  nextStep,
+  prevStep,
+  updateProfile,
   addEducation,
   deleteEducation,
   addSkill,
   deleteSkill,
   addProject,
   deleteProject,
-  addSocial,
+  addSocialMedia,
 } = resumeSlice.actions;
 
 export default resumeSlice.reducer;

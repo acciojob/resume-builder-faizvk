@@ -1,22 +1,20 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-const ResumeOutput = () => {
+function ResumeOutput() {
   const { profile, education, skills, projects, social } = useSelector(
     (state) => state.resume
   );
 
   return (
     <div>
-      <h1>Resume Output</h1>
+      <h2>Final Resume Output</h2>
       <p>
         Name: {profile.fname} {profile.lname}
       </p>
       <p>Phone: {profile.phone}</p>
       <p>Address: {profile.address}</p>
-      <p>
-        Image: <img src={profile.url} alt="Profile" />
-      </p>
+      <p>Image: {profile.url}</p>
       <h3>Education</h3>
       <ul>
         {education.map((e, i) => (
@@ -45,6 +43,6 @@ const ResumeOutput = () => {
       </ul>
     </div>
   );
-};
+}
 
 export default ResumeOutput;

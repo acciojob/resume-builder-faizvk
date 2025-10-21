@@ -1,59 +1,18 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addProject, deleteProject } from "../redux/resumeSlice";
+import React from "react";
+import Navigation from "./Navigation";
 
-const Projects = () => {
-  const dispatch = useDispatch();
-  const projects = useSelector((state) => state.resume.projects);
-
-  const [projectName, setProjectName] = useState("");
-  const [techStack, setTechStack] = useState("");
-  const [description, setDescription] = useState("");
-
-  const handleAdd = () => {
-    dispatch(addProject({ projectName, techStack, description }));
-    setProjectName("");
-    setTechStack("");
-    setDescription("");
-  };
-
+function Projects() {
   return (
     <div>
-      <h2>Projects</h2>
-      <input
-        name="projectName"
-        value={projectName}
-        onChange={(e) => setProjectName(e.target.value)}
-        placeholder="Project Name"
-      />
-      <input
-        name="techStack"
-        value={techStack}
-        onChange={(e) => setTechStack(e.target.value)}
-        placeholder="Tech Stack"
-      />
-      <input
-        name="description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description"
-      />
-      <button id="add_project" onClick={handleAdd}>
-        Add Project
-      </button>
-
-      <ul>
-        {projects.map((p, i) => (
-          <li key={i}>
-            {p.projectName} - {p.techStack} : {p.description}
-            <button id="delete" onClick={() => dispatch(deleteProject(i))}>
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+      <h3>Add your Mini Projects</h3>
+      <input type="text" name="projectName" placeholder="Project Name" />
+      <input type="text" name="techStack" placeholder="Tech Stack" />
+      <input type="text" name="description" placeholder="Description" />
+      <button id="add_project">Add Project</button>
+      <button id="delete_project">Delete</button>
+      <Navigation /> {/* Shows Back + Next */}
     </div>
   );
-};
+}
 
 export default Projects;
