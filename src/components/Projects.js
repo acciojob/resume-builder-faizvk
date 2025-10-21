@@ -1,68 +1,90 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { addProject, deleteProject } from "../actions";
 
-const Projects = ({ onValidChange }) => {
-  const [projects, setProjects] = useState([
-    { projectName: "", techStack: "", description: "" },
-  ]);
+const Projects = ({ projects, addProject, deleteProject }) => {
+  const [formData, setFormData] = useState({
+    projectName: "",
+    techStack: "",
+    description: "",
+  });
 
-  useEffect(() => {
-    const valid = projects.every(
-      (p) => p.projectName.trim() && p.techStack.trim() && p.description.trim()
-    );
-    onValidChange(valid);
-  }, [projects, onValidChange]);
-
-  const handleChange = (index, field, value) => {
-    const newProjects = [...projects];
-    newProjects[index][field] = value;
-    setProjects(newProjects);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const addProject = () =>
-    setProjects([
-      ...projects,
-      { projectName: "", techStack: "", description: "" },
-    ]);
-
-  const removeProject = (index) => {
-    const newProjects = [...projects];
-    newProjects.splice(index, 1);
-    setProjects(newProjects);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addProject(formData);
+    setFormData({
+      projectName: "",
+      techStack: "",
+      description: "",
+    });
   };
 
   return (
-    <div>
-      <h2>Add your Mini Projects</h2>
-      {projects.map((project, index) => (
-        <div key={index}>
+    <div className="projects-section">
+      <h2>Projects</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Project Name:</label>
           <input
+            type="text"
             name="projectName"
-            placeholder="Project Name"
-            value={project.projectName}
-            onChange={(e) => handleChange(index, "projectName", e.target.value)}
+            value={formData.projectName}
+            onChange={handleChange}
+            required
           />
-          <input
-            name="techStack"
-            placeholder="Tech Stack"
-            value={project.techStack}
-            onChange={(e) => handleChange(index, "techStack", e.target.value)}
-          />
-          <input
-            name="description"
-            placeholder="Description"
-            value={project.description}
-            onChange={(e) => handleChange(index, "description", e.target.value)}
-          />
-          <button id="delete" onClick={() => removeProject(index)}>
-            Delete
-          </button>
         </div>
-      ))}
-      <button id="add_project" onClick={addProject}>
-        Add Project
-      </button>
+        <div>
+          <label>Tech Stack:</label>
+          <input
+            type="text"
+            name="techStack"
+            value={formData.techStack}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Description:</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button id="add_project" type="submit">
+          Add Project
+        </button>
+      </form>
+
+      <div className="projects-list">
+        <h3>Your Projects</h3>
+        {projects.map((project, index) => (
+          <div key={index} className="project-item">
+            <h4>{project.projectName}</h4>
+            <p>Tech Stack: {project.techStack}</p>
+            <p>Description: {project.description}</p>
+            <button id="delete" onClick={() => deleteProject(index)}>
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default Projects;
+const mapStateToProps = (state) => ({
+  projects: state.resume.projects,
+});
+
+export default connect(mapStateToProps, { addProject, deleteProject })(
+  Projects
+);

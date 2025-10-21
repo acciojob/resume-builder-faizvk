@@ -1,81 +1,104 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { addEducation, deleteEducation } from "../actions";
 
-const Education = ({ onValidChange }) => {
-  const [educations, setEducations] = useState([
-    { courseName: "", completionYear: "", college: "", percentage: "" },
-  ]);
+const Education = ({ education, addEducation, deleteEducation }) => {
+  const [formData, setFormData] = useState({
+    courseName: "",
+    completionYear: "",
+    college: "",
+    percentage: "",
+  });
 
-  useEffect(() => {
-    // Valid if all fields in all entries are filled
-    const valid = educations.every(
-      (e) =>
-        e.courseName.trim() &&
-        e.completionYear.trim() &&
-        e.college.trim() &&
-        e.percentage.trim()
-    );
-    onValidChange(valid);
-  }, [educations, onValidChange]);
-
-  const handleChange = (index, field, value) => {
-    const newEdu = [...educations];
-    newEdu[index][field] = value;
-    setEducations(newEdu);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const addEducation = () =>
-    setEducations([
-      ...educations,
-      { courseName: "", completionYear: "", college: "", percentage: "" },
-    ]);
-
-  const removeEducation = (index) => {
-    const newEdu = [...educations];
-    newEdu.splice(index, 1);
-    setEducations(newEdu);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addEducation(formData);
+    setFormData({
+      courseName: "",
+      completionYear: "",
+      college: "",
+      percentage: "",
+    });
   };
 
   return (
-    <div>
-      <h2>Add your Education Details</h2>
-      {educations.map((edu, index) => (
-        <div key={index}>
+    <div className="education-section">
+      <h2>Education</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Course Name:</label>
           <input
+            type="text"
             name="courseName"
-            placeholder="Course Name"
-            value={edu.courseName}
-            onChange={(e) => handleChange(index, "courseName", e.target.value)}
+            value={formData.courseName}
+            onChange={handleChange}
+            required
           />
-          <input
-            name="completionYear"
-            placeholder="Completion Year"
-            value={edu.completionYear}
-            onChange={(e) =>
-              handleChange(index, "completionYear", e.target.value)
-            }
-          />
-          <input
-            name="college"
-            placeholder="College"
-            value={edu.college}
-            onChange={(e) => handleChange(index, "college", e.target.value)}
-          />
-          <input
-            name="percentage"
-            placeholder="Percentage"
-            value={edu.percentage}
-            onChange={(e) => handleChange(index, "percentage", e.target.value)}
-          />
-          <button id="delete" onClick={() => removeEducation(index)}>
-            Delete
-          </button>
         </div>
-      ))}
-      <button id="add_education" onClick={addEducation}>
-        Add Education
-      </button>
+        <div>
+          <label>Completion Year:</label>
+          <input
+            type="number"
+            name="completionYear"
+            value={formData.completionYear}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>College/University:</label>
+          <input
+            type="text"
+            name="college"
+            value={formData.college}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Percentage/GPA:</label>
+          <input
+            type="text"
+            name="percentage"
+            value={formData.percentage}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button id="add_education" type="submit">
+          Add Education
+        </button>
+      </form>
+
+      <div className="education-list">
+        <h3>Education Details</h3>
+        {education.map((edu, index) => (
+          <div key={index} className="education-item">
+            <p>Course: {edu.courseName}</p>
+            <p>Year: {edu.completionYear}</p>
+            <p>College: {edu.college}</p>
+            <p>Percentage: {edu.percentage}</p>
+            <button id="delete" onClick={() => deleteEducation(index)}>
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default Education;
+const mapStateToProps = (state) => ({
+  education: state.resume.education,
+});
+
+export default connect(mapStateToProps, { addEducation, deleteEducation })(
+  Education
+);

@@ -1,47 +1,58 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { addSocial, deleteSocial } from "../actions";
 
-const SocialMedia = ({ onValidChange }) => {
-  const [socials, setSocials] = useState([""]);
+const SocialMedia = ({ socialMedia, addSocial, deleteSocial }) => {
+  const [social, setSocial] = useState("");
 
-  useEffect(() => {
-    const valid = socials.every((s) => s.trim());
-    onValidChange(valid);
-  }, [socials, onValidChange]);
-
-  const handleChange = (index, value) => {
-    const newSocials = [...socials];
-    newSocials[index] = value;
-    setSocials(newSocials);
-  };
-
-  const addSocial = () => setSocials([...socials, ""]);
-  const removeSocial = (index) => {
-    const newSocials = [...socials];
-    newSocials.splice(index, 1);
-    setSocials(newSocials);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (social.trim()) {
+      addSocial(social);
+      setSocial("");
+    }
   };
 
   return (
-    <div>
-      <h2>Add your Social Media Links</h2>
-      {socials.map((social, index) => (
-        <div key={index}>
+    <div className="social-media-section">
+      <h2>Social Media</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Social Media Link:</label>
           <input
+            type="url"
             name="Social"
-            placeholder="Social Media URL"
             value={social}
-            onChange={(e) => handleChange(index, e.target.value)}
+            onChange={(e) => setSocial(e.target.value)}
+            required
           />
-          <button id="delete" onClick={() => removeSocial(index)}>
-            Delete
-          </button>
         </div>
-      ))}
-      <button id="add_social" onClick={addSocial}>
-        Add Social Media
-      </button>
+        <button id="add_social" type="submit">
+          Add Social Media
+        </button>
+      </form>
+
+      <div className="social-media-list">
+        <h3>Your Social Media Links</h3>
+        <ul>
+          {socialMedia.map((social, index) => (
+            <li key={index}>
+              <a href={social} target="_blank" rel="noopener noreferrer">
+                {social}
+              </a>
+              <button onClick={() => deleteSocial(index)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
 
-export default SocialMedia;
+const mapStateToProps = (state) => ({
+  socialMedia: state.resume.socialMedia,
+});
+
+export default connect(mapStateToProps, { addSocial, deleteSocial })(
+  SocialMedia
+);

@@ -1,54 +1,45 @@
-import React, { useState } from "react";
+import React from "react";
+import { connect } from "react-redux";
 import Profile from "./components/Profile";
 import Education from "./components/Education";
 import Skills from "./components/Skills";
 import Projects from "./components/Projects";
 import SocialMedia from "./components/SocialMedia";
-import ResumeOutput from "./components/ResumeOutput";
-import Navigation from "./components/Navigation";
+import FinalResume from "./components/FinalResume";
+import NavigationButtons from "./components/NavigationButtons";
+import "./styles/App.css";
 
-function App() {
-  const [page, setPage] = useState(1);
-  const [canProceed, setCanProceed] = useState(false);
-
-  const handleNext = () => canProceed && setPage((prev) => prev + 1);
-  const handleBack = () => setPage((prev) => prev - 1);
-  const handleSave = () => alert("Resume saved!");
-
+const App = ({ currentPage }) => {
   const renderPage = () => {
-    switch (page) {
+    switch (currentPage) {
       case 1:
-        return <Profile onValidChange={setCanProceed} />;
+        return <Profile />;
       case 2:
-        return <Education onValidChange={setCanProceed} />;
+        return <Education />;
       case 3:
-        return <Skills onValidChange={setCanProceed} />;
+        return <Skills />;
       case 4:
-        return <Projects onValidChange={setCanProceed} />;
+        return <Projects />;
       case 5:
-        return <SocialMedia onValidChange={setCanProceed} />;
+        return <SocialMedia />;
       case 6:
-        return <ResumeOutput />;
+        return <FinalResume />;
       default:
-        return <Profile onValidChange={setCanProceed} />;
+        return <Profile />;
     }
   };
 
   return (
-    <div className="App">
-      <h1>RESUME GENERATOR</h1>
+    <div className="app">
+      <h1>Resume Builder</h1>
       {renderPage()}
-      {page <= 5 && (
-        <Navigation
-          page={page}
-          handleNext={handleNext}
-          handleBack={handleBack}
-          handleSave={handleSave}
-          disabledNext={!canProceed} // optional prop for disabling button
-        />
-      )}
+      <NavigationButtons />
     </div>
   );
-}
+};
 
-export default App;
+const mapStateToProps = (state) => ({
+  currentPage: state.resume.currentPage,
+});
+
+export default connect(mapStateToProps)(App);

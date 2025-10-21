@@ -1,67 +1,82 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { updateProfile } from "../actions";
 
-const Profile = ({ onValidChange }) => {
-  const [profile, setProfile] = useState({
-    fname: "",
-    lname: "",
-    phone: "",
-    address: "",
-    url: "",
-  });
-
-  const [isValid, setIsValid] = useState(false);
-
-  useEffect(() => {
-    // Validate fields: all required
-    const valid =
-      profile.fname.trim() &&
-      profile.lname.trim() &&
-      profile.phone.trim() &&
-      profile.address.trim() &&
-      profile.url.trim();
-    setIsValid(valid);
-    onValidChange(valid); // pass validity to App for enabling Next button
-  }, [profile, onValidChange]);
+const Profile = ({ profile, updateProfile }) => {
+  const [formData, setFormData] = useState(profile);
 
   const handleChange = (e) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateProfile(formData);
   };
 
   return (
-    <div>
-      <h2>Add your profile details</h2>
-      <input
-        name="fname"
-        placeholder="First Name"
-        value={profile.fname}
-        onChange={handleChange}
-      />
-      <input
-        name="lname"
-        placeholder="Last Name"
-        value={profile.lname}
-        onChange={handleChange}
-      />
-      <input
-        name="phone"
-        placeholder="Phone"
-        value={profile.phone}
-        onChange={handleChange}
-      />
-      <input
-        name="address"
-        placeholder="Address"
-        value={profile.address}
-        onChange={handleChange}
-      />
-      <input
-        name="url"
-        placeholder="Profile Image URL"
-        value={profile.url}
-        onChange={handleChange}
-      />
+    <div className="profile-section">
+      <h2>Profile Information</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>First Name:</label>
+          <input
+            type="text"
+            name="fname"
+            value={formData.fname}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Last Name:</label>
+          <input
+            type="text"
+            name="lname"
+            value={formData.lname}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Phone:</label>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Address:</label>
+          <textarea
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Image URL:</label>
+          <input
+            type="url"
+            name="url"
+            value={formData.url}
+            onChange={handleChange}
+          />
+        </div>
+        <button type="submit">Save</button>
+      </form>
     </div>
   );
 };
 
-export default Profile;
+const mapStateToProps = (state) => ({
+  profile: state.resume.profile,
+});
+
+export default connect(mapStateToProps, { updateProfile })(Profile);
